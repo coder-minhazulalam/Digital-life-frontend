@@ -64,7 +64,6 @@ export default function Navbar() {
     { name: "Public Lessons", href: "/lessons", icon: BookOpen },
     ...(user
       ? [
-          { name: "Add Lesson", href: "/dashboard/add-lesson", icon: PlusCircle },
           { name: "My Lessons", href: "/dashboard/my-lessons", icon: Sparkles },
         ]
       : []),
