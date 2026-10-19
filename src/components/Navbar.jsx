@@ -212,6 +212,20 @@ export default function Navbar() {
                         <span>My Profile</span>
                       </Link>
                       <Link
+                        href="/dashboard/my-lessons"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-amber-50 dark:hover:bg-zinc-800/60 hover:text-amber-700 dark:hover:text-amber-300 transition-colors font-medium"
+                      >
+                        <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        <span>My Lessons</span>
+                      </Link>
+                      <Link
+                        href="/dashboard/add-lesson"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-amber-50 dark:hover:bg-zinc-800/60 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+                      >
+                        <PlusCircle className="w-4 h-4 opacity-70" />
+                        <span>Add Lesson</span>
+                      </Link>
+                      <Link
                         href="/dashboard"
                         className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-amber-50 dark:hover:bg-zinc-800/60 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
                       >
@@ -322,6 +336,20 @@ export default function Navbar() {
                 >
                   <User className="w-4 h-4 opacity-70" />
                   <span>My Profile</span>
+                </Link>
+                <Link
+                  href="/dashboard/my-lessons"
+                  className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-amber-100/60 dark:hover:bg-zinc-900"
+                >
+                  <Sparkles className="w-4 h-4 opacity-70" />
+                  <span>My Lessons</span>
+                </Link>
+                <Link
+                  href="/dashboard/add-lesson"
+                  className="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-amber-100/60 dark:hover:bg-zinc-900"
+                >
+                  <PlusCircle className="w-4 h-4 opacity-70" />
+                  <span>Add Lesson</span>
                 </Link>
                 <Link
                   href="/dashboard"
