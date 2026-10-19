@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
   X,
@@ -16,23 +16,31 @@ import {
   LogOut,
   ChevronDown,
   Compass,
+  Loader2,
 } from "lucide-react";
+import { useSession, signOut } from "@/lib/auth-client";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // User state (can be connected to Better Auth / session)
-  // Default to null or sample state for smooth demonstration
-  const [user, setUser] = useState({
-    name: "Mahmudul Hasan",
-    email: "mahmudul@example.com",
-    photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
-    role: "user",
-    isPremium: false, // toggled between true/false to see Pricing vs Premium badge
-  });
+  // Real session from Better Auth
+  const { data: session, isPending } = useSession();
+  const user = session?.user ?? null;
+  // role comes from session metadata; Better Auth stores it in user.role
+  // isPremium stored as user.isPremium in the DB
+  const isAdmin = user?.role === "admin";
+  const isPremium = user?.isPremium === true;
+
+  const handleSignOut = async () => {
+    setUserDropdownOpen(false);
+    await signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -112,7 +120,7 @@ export default function Navbar() {
             {/* Pricing / Upgrade Link or Premium Badge */}
             {user && (
               <>
-                {!user.isPremium ? (
+                {!isPremium ? (
                   <Link
                     href="/pricing"
                     className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
@@ -136,7 +144,9 @@ export default function Navbar() {
 
           {/* Right Section: Auth buttons / User Avatar */}
           <div className="hidden md:flex items-center gap-3">
-            {!user ? (
+            {isPending ? (
+              <Loader2 className="w-5 h-5 animate-spin text-amber-600" />
+            ) : !user ? (
               <div className="flex items-center gap-2">
                 <Link
                   href="/login"
@@ -160,10 +170,10 @@ export default function Navbar() {
                   aria-expanded={userDropdownOpen}
                 >
                   <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-amber-600/30">
-                    {user.photoURL ? (
+                    {(user.image || user.photoURL) ? (
                       <Image
-                        src={user.photoURL}
-                        alt={user.name}
+                        src={user.image || user.photoURL}
+                        alt={user.name || "User avatar"}
                         fill
                         sizes="36px"
                         className="object-cover"
@@ -188,8 +198,8 @@ export default function Navbar() {
                         {user.email}
                       </p>
                       <div className="mt-1.5">
-                        <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${user.isPremium ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"}`}>
-                          {user.isPremium ? "⭐ Premium Plan" : "Free Plan"}
+                        <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${isPremium ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"}`}>
+                          {isPremium ? "⭐ Premium Plan" : "Free Plan"}
                         </span>
                       </div>
                     </div>
@@ -223,10 +233,7 @@ export default function Navbar() {
                     <div className="border-t border-zinc-100 dark:border-zinc-800/80 pt-1">
                       <button
                         type="button"
-                        onClick={() => {
-                          setUser(null);
-                          setUserDropdownOpen(false);
-                        }}
+                        onClick={handleSignOut}
                         className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                       >
                         <LogOut className="w-4 h-4 opacity-70" />
@@ -275,7 +282,7 @@ export default function Navbar() {
             );
           })}
 
-          {user && !user.isPremium && (
+          {user && !isPremium && (
             <Link
               href="/pricing"
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-base font-medium text-amber-800 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20"
@@ -285,7 +292,7 @@ export default function Navbar() {
             </Link>
           )}
 
-          {user && user.isPremium && (
+          {user && isPremium && (
             <div className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-amber-800 dark:text-amber-300">
               <Crown className="w-4 h-4 text-amber-500" />
               <span>Active Plan: Premium ⭐</span>
@@ -326,7 +333,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   type="button"
-                  onClick={() => setUser(null)}
+                  onClick={handleSignOut}
                   className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
                 >
                   <LogOut className="w-4 h-4 opacity-70" />

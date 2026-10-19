@@ -5,13 +5,16 @@ import { MongoClient } from "mongodb";
 
 const uri = process.env.AUTH_DB_URI || "";
 const client = uri ? new MongoClient(uri) : null;
-const db = client ? client.db("wanderlust") : null;
+// Use your actual DB name
+const db = client ? client.db("digital-life-lessons") : null;
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 6,
   },
 
   socialProviders: {
@@ -23,7 +26,6 @@ export const auth = betterAuth({
     github: {
       clientId: process.env.GITHUB_CLIENT_ID || "",
       clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
-
       mapProfileToUser: (profile) => ({
         name: profile.login,
       }),
@@ -33,14 +35,32 @@ export const auth = betterAuth({
   session: {
     cookieCache: {
       enabled: true,
-      strategy: "jwt",
       maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
     },
   },
 
-  plugins: [
-    jwt(),
-  ],
+  // Expose extra user fields in the session
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "user",
+        input: false, // not settable by user on sign-up
+      },
+      isPremium: {
+        type: "boolean",
+        defaultValue: false,
+        input: false,
+      },
+      photoURL: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+    },
+  },
+
+  plugins: [jwt()],
 
   ...(db && client
     ? {

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,19 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-amber-50/30 text-zinc-900 selection:bg-amber-200 selection:text-amber-900">
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              borderRadius: "12px",
+              background: "#fff",
+              color: "#1c1917",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+              fontSize: "14px",
+            },
+          }}
+        />
         <Suspense fallback={<div className="h-20 w-full bg-amber-50/80" />}>
           <Navbar />
         </Suspense>
