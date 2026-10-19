@@ -6,6 +6,7 @@ import LessonDetailsClient from "./LessonDetailsClient";
 export default async function LessonDetailsPage({ params }) {
   const { id } = await params;
 
+  
   return (
     <Suspense
       fallback={
@@ -14,7 +15,7 @@ export default async function LessonDetailsPage({ params }) {
         </div>
       }
     >
-      <LessonDetailsClient lessonId={id} />
+      <LessonDetailsClient lessonId={id}/>
     </Suspense>
   );
 }

@@ -87,6 +87,7 @@ function PublicLessonsContent() {
             setTotalPages(1);
             setTotalCount(data.length);
           }
+          
         }
       } catch (err) {
         console.error("Error loading lessons:", err);
