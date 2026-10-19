@@ -1,6 +1,8 @@
 import HeroBanner from "@/components/HeroBanner";
 import FeaturedLessons from "@/components/FeaturedLessons";
 import WhyLearningMatters from "@/components/WhyLearningMatters";
+import TopContributors from "@/components/TopContributors";
+import MostSavedLessons from "@/components/MostSavedLessons";
 
 export default function Home() {
   return (
@@ -13,6 +15,12 @@ export default function Home() {
 
       {/* 3. Why Learning From Life Matters (Static) */}
       <WhyLearningMatters />
+
+      {/* 4. Top Contributors of the Week (Dynamic) */}
+      <TopContributors />
+
+      {/* 5. Most Saved Lessons (Dynamic) */}
+      <MostSavedLessons />
     </div>
   );
 }

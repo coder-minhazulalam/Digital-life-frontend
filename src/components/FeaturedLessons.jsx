@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Sparkles, ArrowRight, BookOpen, Loader2 } from "lucide-react";
+import { Sparkles, ArrowRight, BookOpen } from "lucide-react";
 import LessonCard from "./LessonCard";
 
 export default function FeaturedLessons() {
@@ -13,19 +13,17 @@ export default function FeaturedLessons() {
     async function fetchFeatured() {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        // Fetch featured or public lessons from backend
         const res = await fetch(`${apiUrl}/lessons/featured`, {
           cache: "no-store",
         });
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            // Limit to exactly 4 cards for home page as requested
             setFeaturedLessons(data.slice(0, 4));
           }
         }
       } catch (err) {
-        console.error("Error fetching featured lessons from backend:", err);
+        console.error("Error fetching featured lessons:", err);
       } finally {
         setLoading(false);
       }
@@ -34,20 +32,20 @@ export default function FeaturedLessons() {
   }, []);
 
   return (
-    <section className="py-16 md:py-24 bg-amber-50/40 dark:bg-zinc-950 border-b border-amber-900/10 dark:border-zinc-800">
+    <section className="py-20 md:py-28 bg-amber-50/40 dark:bg-zinc-950 border-b border-amber-900/10 dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/30">
               <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>Curated Community Wisdom</span>
+              <span>Admin Curated Wisdom</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight">
               Featured Life Lessons
             </h2>
             <p className="text-base text-zinc-600 dark:text-zinc-400 max-w-xl">
-              Hand-picked stories and insights curated for their depth, honesty, and transformative life lessons.
+              Hand-picked stories and insights curated by our editorial team for their depth, honesty, and transformative lessons.
             </p>
           </div>
 
@@ -60,7 +58,7 @@ export default function FeaturedLessons() {
           </Link>
         </div>
 
-        {/* Loading State Skeleton */}
+        {/* Loading Skeletons */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((n) => (
@@ -95,25 +93,23 @@ export default function FeaturedLessons() {
           </div>
         )}
 
-        {/* Bottom Banner Prompt to explore full catalog */}
+        {/* Bottom Banner Prompt */}
         <div className="mt-14 p-8 rounded-3xl bg-gradient-to-r from-amber-900 via-amber-800 to-amber-950 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center sm:text-left">
             <h3 className="font-serif text-xl sm:text-2xl font-bold">
-              Looking for more wisdom and real stories?
+              Have a meaningful experience to share?
             </h3>
             <p className="text-sm text-amber-200/80 max-w-md">
-              Browse through our full library of public life lessons categorized by mindset, career, relationships, and more.
+              Your setbacks and triumphs could guide someone navigating the exact same path.
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/lessons"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm transition-all shadow-md hover:scale-105"
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Explore All Lessons</span>
-            </Link>
-          </div>
+          <Link
+            href="/dashboard/add-lesson"
+            className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm transition-all shadow-md hover:scale-105"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Write a Lesson</span>
+          </Link>
         </div>
       </div>
     </section>
