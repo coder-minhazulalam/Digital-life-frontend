@@ -1,9 +1,10 @@
-import Image from "next/image";
+import HeroBanner from "@/components/HeroBanner";
 
 export default function Home() {
   return (
-    <>
-      <h1>Home</h1>
-    </>
+    <div className="flex flex-col min-h-screen">
+      {/* 1. Hero Banner / Slider */}
+      <HeroBanner />
+    </div>
   );
 }
