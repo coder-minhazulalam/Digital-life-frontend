@@ -46,12 +46,7 @@ export default function DashboardLayout({ children }) {
       icon: User,
       description: "Manage your personal info",
     },
-    {
-      name: "Add Lesson",
-      href: "/dashboard/add-lesson",
-      icon: PlusCircle,
-      description: "Share your wisdom",
-    },
+
     {
       name: "My Lessons",
       href: "/dashboard/my-lessons",
