@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 import {
   Search,
   SlidersHorizontal,
@@ -37,6 +38,9 @@ const sortOptions = [
 ];
 
 function PublicLessonsContent() {
+  const { data: session } = useSession();
+  const currentUser = session?.user ?? null;
+
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -46,13 +50,6 @@ function PublicLessonsContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-
-  // User state for premium/free access level
-  const [currentUser] = useState({
-    name: "Mahmudul Hasan",
-    email: "mahmudul@example.com",
-    isPremium: false,
-  });
 
   // Fetch lessons from backend API
   useEffect(() => {

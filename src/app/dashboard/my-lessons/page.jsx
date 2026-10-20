@@ -86,6 +86,7 @@ export default function MyLessonsPage() {
     emotionalTone: "",
     visibility: "Public",
     accessLevel: "Free",
+    image: "",
   });
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -129,6 +130,7 @@ export default function MyLessonsPage() {
       emotionalTone: lesson.emotionalTone || EMOTIONAL_TONES[0].id,
       visibility: lesson.visibility || "Public",
       accessLevel: lesson.accessLevel || "Free",
+      image: lesson.image || "",
     });
   };
 
@@ -658,16 +660,31 @@ export default function MyLessonsPage() {
                       className="hover:bg-amber-50/40 dark:hover:bg-zinc-800/40 transition-colors group"
                     >
                       {/* Title & Preview */}
-                      <td className="py-4 px-5 max-w-xs">
-                        <Link
-                          href={`/lessons/${lesson._id}`}
-                          className="font-serif font-bold text-zinc-900 dark:text-zinc-100 hover:text-amber-700 dark:hover:text-amber-400 line-clamp-1 transition-colors block"
-                        >
-                          {lesson.title}
-                        </Link>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">
-                          {lesson.description}
-                        </p>
+                      <td className="py-4 px-5 max-w-sm">
+                        <div className="flex items-center gap-3">
+                          {lesson.image ? (
+                            <img
+                              src={lesson.image}
+                              alt={lesson.title}
+                              className="w-11 h-11 rounded-xl object-cover flex-shrink-0 border border-zinc-200 dark:border-zinc-700 shadow-xs"
+                            />
+                          ) : (
+                            <div className="w-11 h-11 rounded-xl bg-amber-50 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 text-amber-700 dark:text-amber-400 border border-amber-200/40 dark:border-zinc-700">
+                              <BookOpen className="w-5 h-5" />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <Link
+                              href={`/lessons/${lesson._id}`}
+                              className="font-serif font-bold text-zinc-900 dark:text-zinc-100 hover:text-amber-700 dark:hover:text-amber-400 line-clamp-1 transition-colors block"
+                            >
+                              {lesson.title}
+                            </Link>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">
+                              {lesson.description}
+                            </p>
+                          </div>
+                        </div>
                       </td>
 
                       {/* Category & Tone */}
@@ -799,6 +816,15 @@ export default function MyLessonsPage() {
                 key={lesson._id}
                 className="rounded-2xl bg-white dark:bg-zinc-900 border border-amber-900/10 dark:border-zinc-800/80 shadow-sm hover:shadow-md hover:border-amber-500/40 transition-all flex flex-col justify-between overflow-hidden group"
               >
+                {lesson.image && (
+                  <div className="relative w-full h-36 overflow-hidden bg-zinc-100 dark:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
+                    <img
+                      src={lesson.image}
+                      alt={lesson.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                )}
                 <div className="p-5 space-y-3.5">
                   {/* Card Header: Category & Tone Badges */}
                   <div className="flex items-center justify-between gap-2">
@@ -945,6 +971,29 @@ export default function MyLessonsPage() {
                   onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-xl text-sm bg-stone-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
+              </div>
+
+              {/* Cover Image URL */}
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-1.5">
+                  Featured Image URL (Optional)
+                </label>
+                <input
+                  type="url"
+                  value={editForm.image || ""}
+                  onChange={(e) => setEditForm({ ...editForm, image: e.target.value })}
+                  placeholder="https://images.unsplash.com/photo-..."
+                  className="w-full px-4 py-2.5 rounded-xl text-sm bg-stone-50 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+                {editForm.image && editForm.image.trim() && (
+                  <div className="mt-2 relative w-full h-32 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    <img
+                      src={editForm.image.trim()}
+                      alt="Cover preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Description */}

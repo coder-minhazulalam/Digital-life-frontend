@@ -71,11 +71,11 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-3.5 group">
               <div className="relative w-12 h-12 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
                 <Image
-                  src="/assets/digital_life_lessons_brand_emblem.png"
-                  alt="Digital Life Lessons Emblem"
+                  src="/logo_central.jpg"
+                  alt="Digital Life Lessons"
                   width={48}
                   height={48}
-                  className="w-full h-full object-contain drop-shadow-md"
+                  className="w-full h-full object-cover rounded-xl drop-shadow-md"
                 />
               </div>
               <div className="flex flex-col">

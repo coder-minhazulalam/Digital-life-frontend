@@ -101,11 +101,11 @@ export default function DashboardLayout({ children }) {
       <div className="md:hidden sticky top-0 z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-amber-900/10 px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <Image
-            src="/assets/digital_life_lessons_brand_emblem.png"
-            alt="Brand Emblem"
+            src="/logo_central.jpg"
+            alt="Brand Logo"
             width={32}
             height={32}
-            className="w-8 h-8 object-contain"
+            className="w-8 h-8 object-cover rounded-lg"
           />
           <span className="font-serif font-bold text-base text-amber-950 dark:text-amber-100">
             Digital Life

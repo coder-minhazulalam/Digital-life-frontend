@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import {
@@ -65,8 +65,13 @@ const FAQS = [
   },
 ];
 
-export default function PricingPage() {
+function PricingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam =
+    searchParams.get("redirect") ||
+    (searchParams.get("lessonId") ? `/lessons/${searchParams.get("lessonId")}` : null);
+
   const { data: session, isPending, refetch } = useSession();
   const user = session?.user ?? null;
   const isPremium = user?.isPremium === true;
@@ -77,22 +82,35 @@ export default function PricingPage() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+  // If already premium and visiting with a lesson redirect, take them straight to it
+  useEffect(() => {
+    if (isPremium && redirectParam) {
+      toast.success("You are a Premium member! Taking you to your lesson...");
+      router.replace(redirectParam);
+    }
+  }, [isPremium, redirectParam, router]);
+
   const handleUpgrade = async () => {
     if (!user) {
       toast.error("Please sign in to upgrade your account");
-      router.push("/login?callbackUrl=/pricing");
+      const loginCallback = redirectParam ? `/pricing?redirect=${encodeURIComponent(redirectParam)}` : "/pricing";
+      router.push(`/login?callbackUrl=${encodeURIComponent(loginCallback)}`);
       return;
     }
 
     if (isPremium) {
-      toast("You are already a Premium member! 🌟");
+      if (redirectParam) {
+        router.push(redirectParam);
+      } else {
+        toast("You are already a Premium member! 🌟");
+      }
       return;
     }
 
     setIsUpgrading(true);
 
     // Simulate a brief loading state for realism
-    await new Promise((res) => setTimeout(res, 1200));
+    await new Promise((res) => setTimeout(res, 1000));
 
     try {
       const response = await fetch(`${apiUrl}/users/upgrade-premium`, {
@@ -111,14 +129,16 @@ export default function PricingPage() {
       // Force session refresh so isPremium is up to date everywhere
       if (typeof refetch === "function") {
         await refetch();
-      } else {
-        // Fallback: reload session by refreshing
-        setTimeout(() => {
-          window.location.reload();
-        }, 2500);
       }
 
-      toast.success("🎉 Welcome to Premium! Your account has been upgraded.");
+      if (redirectParam) {
+        toast.success("🎉 Welcome to Premium! Taking you directly to your lesson...");
+        setTimeout(() => {
+          router.push(redirectParam);
+        }, 1200);
+      } else {
+        toast.success("🎉 Welcome to Premium! Your account has been upgraded.");
+      }
     } catch (err) {
       console.error("Upgrade error:", err);
       toast.error(err.message || "Something went wrong. Please try again.");
@@ -155,6 +175,13 @@ export default function PricingPage() {
             Every life holds invaluable lessons. Start free and upgrade when you&apos;re ready to unlock the full depth of human wisdom shared on this platform.
           </p>
 
+          {redirectParam && (
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-medium animate-in fade-in">
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              <span>Upgrading to unlock your selected lesson. You&apos;ll be directed straight to it upon activation.</span>
+            </div>
+          )}
+
           {isPremium && (
             <div className="inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-semibold shadow-lg shadow-amber-500/25">
               <BadgeCheck className="w-5 h-5" />
@@ -172,8 +199,21 @@ export default function PricingPage() {
             <div className="text-4xl mb-2">🎉</div>
             <h3 className="font-serif text-2xl font-bold">Welcome to Premium!</h3>
             <p className="mt-1 opacity-90">
-              Your account has been successfully upgraded. Enjoy unlimited access to all premium life lessons.
+              {redirectParam
+                ? "Your account has been upgraded! Taking you directly to your lesson now..."
+                : "Your account has been successfully upgraded. Enjoy unlimited access to all premium life lessons."}
             </p>
+            {redirectParam && (
+              <div className="mt-4">
+                <Link
+                  href={redirectParam}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white text-emerald-800 font-bold text-sm shadow hover:bg-emerald-50 transition-all"
+                >
+                  <span>Go to Lesson Now</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
@@ -506,5 +546,19 @@ export default function PricingPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-amber-50/20 dark:bg-zinc-950">
+          <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
+        </div>
+      }
+    >
+      <PricingContent />
+    </Suspense>
   );
 }

@@ -21,16 +21,19 @@ import {
   Trash2,
   Share2,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 
 export default function LessonDetailsClient({ lessonId }) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, isPending: isAuthPending, refetch } = useSession();
   const currentUser = session?.user ?? null;
 
   const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [unlockedLocally, setUnlockedLocally] = useState(false);
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
   // Interaction states
   const [liked, setLiked] = useState(false);
@@ -54,6 +57,14 @@ export default function LessonDetailsClient({ lessonId }) {
   const [reportSubmitting, setReportSubmitting] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  // Auth guard: single lesson page strictly requires logged-in user
+  useEffect(() => {
+    if (!isAuthPending && !currentUser) {
+      toast.error("Please log in to view this lesson");
+      router.replace(`/login?callbackUrl=/lessons/${lessonId}`);
+    }
+  }, [isAuthPending, currentUser, lessonId, router]);
 
   // Fetch lesson data & comments
   useEffect(() => {
@@ -346,6 +357,45 @@ export default function LessonDetailsClient({ lessonId }) {
     }
   };
 
+  // Auth loading state
+  if (isAuthPending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-amber-50/30 dark:bg-zinc-950">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-9 h-9 animate-spin text-amber-600" />
+          <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
+            Verifying your session...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Guest blocking screen
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 bg-amber-50/30 dark:bg-zinc-950">
+        <div className="text-center max-w-md bg-white dark:bg-zinc-900 p-8 rounded-3xl border border-amber-900/10 shadow-xl space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+            <Lock className="w-7 h-7" />
+          </div>
+          <h2 className="font-serif text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+            Sign In Required
+          </h2>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            You must be logged in with an active account session to view and explore this lesson. Redirecting to login...
+          </p>
+          <Link
+            href={`/login?callbackUrl=/lessons/${lessonId}`}
+            className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-semibold text-sm transition-all"
+          >
+            <span>Proceed to Sign In</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-amber-50/30 dark:bg-zinc-950">
@@ -383,11 +433,45 @@ export default function LessonDetailsClient({ lessonId }) {
 
   const isAdmin = currentUser?.role === "admin";
   const isCreator = Boolean(currentUser?.email && currentUser.email === lesson.creatorEmail);
-  const isUserPremium = currentUser?.isPremium === true || isAdmin;
+  const isUserPremium = currentUser?.isPremium === true || isAdmin || unlockedLocally;
   const isLocked =
     (lesson.accessLevel === "Premium" || lesson.access === "Premium") &&
     !isUserPremium &&
     !isCreator;
+
+  const handleDirectUpgrade = async () => {
+    if (!currentUser) {
+      toast.error("Please sign in to unlock this premium lesson");
+      router.push(`/login?callbackUrl=/lessons/${lessonId}`);
+      return;
+    }
+
+    setIsUpgrading(true);
+    try {
+      const response = await fetch(`${apiUrl}/users/upgrade-premium`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: currentUser.email }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || "Failed to upgrade account");
+      }
+
+      setUnlockedLocally(true);
+      if (typeof refetch === "function") {
+        await refetch();
+      }
+
+      toast.success("🎉 Welcome to Premium! Lesson unlocked.");
+    } catch (err) {
+      console.error("Direct upgrade error:", err);
+      toast.error(err.message || "Failed to upgrade. Please try again.");
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/40 via-white to-amber-50/20 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 py-10 px-4 sm:px-6 lg:px-8">
@@ -477,15 +561,34 @@ export default function LessonDetailsClient({ lessonId }) {
                 Premium Wisdom Story
               </h2>
               <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-md mx-auto">
-                This in-depth lesson is reserved for Premium members. Upgrade with a one-time payment of ৳1500 for lifetime access to all wisdom stories.
+                This in-depth lesson is reserved for Premium members. Upgrade with a one-time activation of ৳1500 for lifetime access to this story and all wisdom lessons.
               </p>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-sm shadow-xl shadow-amber-900/20 transition-all hover:scale-105"
-              >
-                <Crown className="w-4 h-4" />
-                <span>Upgrade to Premium (৳1500)</span>
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleDirectUpgrade}
+                  disabled={isUpgrading}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-sm shadow-xl shadow-amber-900/20 transition-all hover:scale-105 disabled:opacity-60 disabled:scale-100 cursor-pointer"
+                >
+                  {isUpgrading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Unlocking Story...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Crown className="w-4 h-4" />
+                      <span>Unlock This Lesson (৳1500)</span>
+                    </>
+                  )}
+                </button>
+                <Link
+                  href={`/pricing?redirect=/lessons/${lessonId}`}
+                  className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold transition-all"
+                >
+                  <span>View Pricing Plans</span>
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="prose prose-amber dark:prose-invert max-w-none text-base sm:text-lg text-zinc-800 dark:text-zinc-200 leading-relaxed font-serif space-y-6 whitespace-pre-line">

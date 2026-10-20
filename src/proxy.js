@@ -25,6 +25,15 @@ export default async function proxy(request) {
     return NextResponse.next();
   }
 
+  // Protect lessons/:id (single lesson details) - require login
+  if (pathname.startsWith("/lessons/") && pathname.length > "/lessons/".length) {
+    if (!isLoggedIn) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   // Protect dashboard and its sub-routes
   if (PROTECTED_ROUTES.some((r) => pathname.startsWith(r))) {
     if (!isLoggedIn) {

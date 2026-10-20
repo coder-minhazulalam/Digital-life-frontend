@@ -132,7 +132,7 @@ export default function LessonCard({ lesson, currentUser }) {
               Upgrade to Premium to read this complete wisdom story and all exclusive insights.
             </p>
             <Link
-              href="/pricing"
+              href={`/pricing?redirect=/lessons/${lessonId}`}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white shadow-md shadow-amber-900/10 transition-all hover:scale-105"
             >
               <Crown className="w-3.5 h-3.5" />
@@ -187,10 +187,10 @@ export default function LessonCard({ lesson, currentUser }) {
         {/* See Details Button */}
         <div className="mt-4 pt-3 border-t border-dashed border-amber-900/10 dark:border-zinc-800">
           <Link
-            href={isLocked ? "/pricing" : `/lessons/${lessonId}`}
+            href={`/lessons/${lessonId}`}
             className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-amber-100/70 dark:bg-zinc-800 hover:bg-amber-600 hover:text-white dark:hover:bg-amber-600 dark:hover:text-white text-amber-950 dark:text-amber-200 transition-all duration-200 group/btn"
           >
-            <span>{isLocked ? "Upgrade to Read" : "See Details"}</span>
+            <span>{isLocked ? "Unlock & Read Lesson" : "See Details"}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
           </Link>
         </div>

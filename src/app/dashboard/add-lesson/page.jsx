@@ -19,6 +19,9 @@ import {
   Sparkles,
   CheckCircle,
   Info,
+  Image as ImageIcon,
+  Link2,
+  X,
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -66,8 +69,10 @@ export default function AddLessonPage() {
     emotionalTone: "",
     visibility: "Public",
     accessLevel: "Free",
+    image: "",
   });
 
+  const [imagePreviewError, setImagePreviewError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [charCount, setCharCount] = useState(0);
   const MIN_CHARS = 100;
@@ -77,6 +82,7 @@ export default function AddLessonPage() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (name === "description") setCharCount(value.length);
+    if (name === "image") setImagePreviewError(false);
   };
 
   const handleSubmit = async (e) => {
@@ -115,6 +121,7 @@ export default function AddLessonPage() {
           emotionalTone: form.emotionalTone,
           visibility: form.visibility,
           accessLevel: form.accessLevel,
+          image: form.image.trim(),
           creatorName: user.name || "Anonymous",
           creatorEmail: user.email,
           creatorPhoto: user.image || user.photoURL || "",
@@ -197,6 +204,83 @@ export default function AddLessonPage() {
               <p className="text-xs text-zinc-400 text-right">
                 {form.title.length}/150
               </p>
+            </div>
+
+            {/* Cover / Featured Image URL (Optional) */}
+            <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-200/80 dark:border-zinc-800 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="image"
+                  className="flex items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300"
+                >
+                  <ImageIcon className="w-4 h-4 text-amber-600" />
+                  Featured Image URL
+                  <span className="text-xs font-normal text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full ml-1">
+                    Optional
+                  </span>
+                </label>
+                {form.image && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm((prev) => ({ ...prev, image: "" }));
+                      setImagePreviewError(false);
+                    }}
+                    className="text-xs text-zinc-400 hover:text-rose-500 flex items-center gap-1 transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" /> Clear URL
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-zinc-400 -mt-1">
+                Paste a direct image link (e.g. Unsplash or web image) to give your lesson a striking header banner.
+              </p>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                  <Link2 className="w-4 h-4" />
+                </div>
+                <input
+                  id="image"
+                  name="image"
+                  type="url"
+                  value={form.image}
+                  onChange={handleChange}
+                  placeholder="https://images.unsplash.com/photo-..."
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 transition-all"
+                />
+              </div>
+
+              {/* Live Image Preview */}
+              {form.image.trim() && (
+                <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                      Image Preview:
+                    </span>
+                    {!imagePreviewError && (
+                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" /> Valid preview
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    {!imagePreviewError ? (
+                      <img
+                        src={form.image.trim()}
+                        alt="Lesson cover preview"
+                        className="w-full h-full object-cover transition-all"
+                        onError={() => setImagePreviewError(true)}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-xs text-rose-500 p-4 text-center gap-1.5">
+                        <ImageIcon className="w-7 h-7 text-rose-400" />
+                        <span className="font-medium">Unable to load image from this URL</span>
+                        <span className="text-zinc-400 text-[11px]">Make sure the link is a direct public image address (e.g. from Unsplash or ending in .jpg, .png, .webp).</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Story / Description */}

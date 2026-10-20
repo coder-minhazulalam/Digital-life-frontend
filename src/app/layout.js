@@ -10,7 +10,6 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -20,6 +19,14 @@ export const metadata = {
   title: "Digital Life Lessons | Meaningful Life Insights & Wisdom",
   description:
     "A platform where users can create, store, and share meaningful life lessons, personal growth insights, and wisdom gathered over time.",
+  icons: {
+    icon: [
+      { url: "/logo_central.jpg" },
+      { url: "/logo_central.jpg", type: "image/jpeg" },
+    ],
+    shortcut: "/logo_central.jpg",
+    apple: "/logo_central.jpg",
+  },
 };
 
 export default function RootLayout({ children }) {

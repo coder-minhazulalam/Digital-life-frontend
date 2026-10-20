@@ -3,6 +3,14 @@ import Image from "next/image";
 
 export const metadata = {
   title: "Digital Life Lessons — Auth",
+  icons: {
+    icon: [
+      { url: "/logo_central.jpg" },
+      { url: "/logo_central.jpg", type: "image/jpeg" },
+    ],
+    shortcut: "/logo_central.jpg",
+    apple: "/logo_central.jpg",
+  },
 };
 
 export default function AuthLayout({ children }) {
@@ -13,11 +21,11 @@ export default function AuthLayout({ children }) {
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-10 h-10 transition-transform duration-300 group-hover:scale-105">
             <Image
-              src="/assets/digital_life_lessons_brand_emblem.png"
+              src="/logo_central.jpg"
               alt="Digital Life Lessons"
               width={40}
               height={40}
-              className="object-contain"
+              className="object-cover rounded-xl"
             />
           </div>
           <span className="font-serif text-xl font-bold text-amber-950 group-hover:text-amber-700 transition-colors">
