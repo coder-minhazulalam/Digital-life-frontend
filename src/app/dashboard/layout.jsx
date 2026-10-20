@@ -96,7 +96,7 @@ export default function DashboardLayout({ children }) {
   const userPhoto = user?.image || user?.photoURL;
 
   return (
-    <div className="min-h-screen bg-stone-50/60 dark:bg-zinc-950 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-stone-50/60 dark:bg-zinc-950 flex flex-col md:flex-row w-full max-w-full overflow-x-hidden">
       {/* Mobile Top Header */}
       <div className="md:hidden sticky top-0 z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-amber-900/10 px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
@@ -288,8 +288,10 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
-        {children}
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 w-full max-w-full overflow-x-auto">
+        <div className="max-w-7xl mx-auto w-full min-w-0">
+          {children}
+        </div>
       </main>
     </div>
   );

@@ -239,7 +239,7 @@ export default function ManageLessonsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 w-full min-w-0 pb-12">
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -355,7 +355,7 @@ export default function ManageLessonsPage() {
             onChange={(e) => setFeaturedFilter(e.target.value)}
             className="px-3 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-700 dark:text-zinc-300 font-medium focus:outline-none focus:border-amber-500"
           >
-            <option value="all">All Featured States</option>
+            <option value="all">All Featured</option>
             <option value="featured">Featured Only</option>
             <option value="standard">Standard Only</option>
           </select>
@@ -385,7 +385,7 @@ export default function ManageLessonsPage() {
       </div>
 
       {/* ── Lessons Table ───────────────────────────────────────────────── */}
-      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden w-full min-w-0">
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center gap-3">
             <div className="w-8 h-8 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
@@ -404,16 +404,16 @@ export default function ManageLessonsPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/75 dark:bg-zinc-800/40 text-zinc-400 font-bold uppercase tracking-wider text-[11px]">
-                  <th className="py-3.5 px-4 sm:px-6">Lesson</th>
-                  <th className="py-3.5 px-4">Creator</th>
-                  <th className="py-3.5 px-4">Category</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Engagement</th>
-                  <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
+                <tr className="border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/75 dark:bg-zinc-800/40 text-zinc-400 font-bold uppercase tracking-wider text-[10px]">
+                  <th className="py-3 px-3 sm:px-4">Lesson</th>
+                  <th className="py-3 px-3">Creator</th>
+                  <th className="py-3 px-3">Category</th>
+                  <th className="py-3 px-3">Status</th>
+                  <th className="py-3 px-3">Engagement</th>
+                  <th className="py-3 px-3 sm:px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
@@ -430,8 +430,8 @@ export default function ManageLessonsPage() {
                       className="hover:bg-zinc-50/60 dark:hover:bg-zinc-800/30 transition-colors"
                     >
                       {/* Lesson Title & Link */}
-                      <td className="py-3.5 px-4 sm:px-6 max-w-xs">
-                        <div className="space-y-1">
+                      <td className="py-3 px-3 sm:px-4 max-w-[180px] lg:max-w-[240px]">
+                        <div className="space-y-0.5">
                           <div className="flex items-center gap-1.5">
                             {isFeatured && (
                               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500 flex-shrink-0" />
@@ -439,41 +439,41 @@ export default function ManageLessonsPage() {
                             <Link
                               href={`/lessons/${lessonId}`}
                               target="_blank"
-                              className="font-bold text-zinc-900 dark:text-zinc-100 hover:text-amber-700 transition-colors line-clamp-1 group inline-flex items-center gap-1"
+                              className="font-bold text-zinc-900 dark:text-zinc-100 hover:text-amber-700 transition-colors truncate block group inline-flex items-center gap-1"
+                              title={l.title}
                             >
-                              <span>{l.title}</span>
+                              <span className="truncate">{l.title}</span>
                               <ExternalLink className="w-3 h-3 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                             </Link>
                           </div>
-                          <p className="text-[11px] text-zinc-400 line-clamp-1">
+                          <p className="text-[11px] text-zinc-400 truncate">
                             {l.summary || l.description || "No description provided."}
                           </p>
                         </div>
                       </td>
 
                       {/* Creator */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-3 max-w-[130px]">
                         <div className="min-w-0">
                           <p className="font-semibold text-zinc-800 dark:text-zinc-200 truncate">
                             {l.creatorName || "Anonymous"}
                           </p>
-                          <p className="text-[11px] text-zinc-400 truncate">{l.creatorEmail}</p>
+                          <p className="text-[10px] text-zinc-400 truncate">{l.creatorEmail}</p>
                         </div>
                       </td>
 
                       {/* Category */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-3 whitespace-nowrap">
                         <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                           {l.category || "General"}
                         </span>
                       </td>
 
                       {/* Status Badges */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          {/* Access */}
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                               isPremium
                                 ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
                                 : "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
@@ -483,9 +483,8 @@ export default function ManageLessonsPage() {
                             <span>{isPremium ? "Premium" : "Free"}</span>
                           </span>
 
-                          {/* Visibility */}
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                            className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${
                               isPrivate
                                 ? "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
                                 : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
@@ -502,17 +501,17 @@ export default function ManageLessonsPage() {
                       </td>
 
                       {/* Engagement */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-3 text-zinc-500 text-[11px]">
-                          <span className="flex items-center gap-1" title="Likes">
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        <div className="flex items-center gap-2.5 text-zinc-500 text-[11px]">
+                          <span className="flex items-center gap-0.5" title="Likes">
                             <Heart className="w-3 h-3 text-rose-500" />
                             {l.likesCount ?? 0}
                           </span>
-                          <span className="flex items-center gap-1" title="Saves">
+                          <span className="flex items-center gap-0.5" title="Saves">
                             <Bookmark className="w-3 h-3 text-amber-500" />
                             {l.savesCount ?? 0}
                           </span>
-                          <span className="flex items-center gap-1" title="Comments">
+                          <span className="flex items-center gap-0.5" title="Comments">
                             <MessageSquare className="w-3 h-3 text-blue-500" />
                             {l.commentsCount ?? 0}
                           </span>
@@ -520,25 +519,25 @@ export default function ManageLessonsPage() {
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3.5 px-4 sm:px-6 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                      <td className="py-3 px-3 sm:px-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1">
                           {/* Toggle Free / Premium Access */}
                           <button
                             onClick={() => handleAccessToggle(l)}
                             disabled={isActionLoading}
                             title={
                               isPremium
-                                ? "Change access to Free (available to everyone)"
-                                : "Make this lesson Premium (exclusive wisdom)"
+                                ? "Status: Premium — Click to make Free"
+                                : "Status: Free — Click to make Premium"
                             }
-                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-40 ${
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold transition-all disabled:opacity-40 ${
                               isPremium
-                                ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800"
-                                : "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 border border-blue-200 dark:border-blue-800"
+                                ? "bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 hover:bg-amber-200 border border-amber-300 dark:border-amber-800"
+                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200"
                             }`}
                           >
-                            <Crown className="w-3 h-3" />
-                            <span>{isPremium ? "Make Free" : "Make Premium"}</span>
+                            <Crown className={`w-3 h-3 ${isPremium ? "text-amber-600 fill-amber-500" : "text-zinc-400"}`} />
+                            <span>{isPremium ? "Premium" : "Free"}</span>
                           </button>
 
                           {/* Toggle Featured */}
@@ -547,26 +546,17 @@ export default function ManageLessonsPage() {
                             disabled={isActionLoading}
                             title={
                               isFeatured
-                                ? "Remove from Featured lessons on homepage"
-                                : "Feature this lesson on the homepage"
+                                ? "Featured on homepage — Click to unfeature"
+                                : "Click to feature on homepage"
                             }
-                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-40 ${
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold transition-all disabled:opacity-40 ${
                               isFeatured
-                                ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 hover:bg-amber-200 border border-amber-300 dark:border-amber-800"
-                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200"
+                                ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800"
+                                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200"
                             }`}
                           >
-                            {isFeatured ? (
-                              <>
-                                <StarOff className="w-3 h-3 text-amber-700" />
-                                <span>Unfeature</span>
-                              </>
-                            ) : (
-                              <>
-                                <Star className="w-3 h-3 text-zinc-500" />
-                                <span>Feature</span>
-                              </>
-                            )}
+                            <Star className={`w-3 h-3 ${isFeatured ? "text-amber-500 fill-amber-500" : "text-zinc-400"}`} />
+                            <span>{isFeatured ? "Featured" : "Feature"}</span>
                           </button>
 
                           {/* Preview Link */}
@@ -574,7 +564,7 @@ export default function ManageLessonsPage() {
                             href={`/lessons/${lessonId}`}
                             target="_blank"
                             title="Preview lesson details"
-                            className="p-1.5 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-800 transition-colors"
+                            className="p-1 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                           >
                             <Eye className="w-3.5 h-3.5" />
                           </Link>
@@ -584,7 +574,7 @@ export default function ManageLessonsPage() {
                             onClick={() => setConfirmDeleteLesson(l)}
                             disabled={isActionLoading}
                             title="Delete lesson"
-                            className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-700 transition-colors"
+                            className="p-1 rounded-lg text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

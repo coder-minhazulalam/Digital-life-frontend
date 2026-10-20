@@ -213,7 +213,7 @@ export default function ManageUsersPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 w-full min-w-0 pb-12">
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -334,7 +334,7 @@ export default function ManageUsersPage() {
       </div>
 
       {/* ── Users Table & Responsive Card View ──────────────────────────── */}
-      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm overflow-hidden w-full min-w-0">
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center gap-3">
             <div className="w-8 h-8 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
@@ -353,7 +353,7 @@ export default function ManageUsersPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/75 dark:bg-zinc-800/40 text-zinc-400 font-bold uppercase tracking-wider text-[11px]">
