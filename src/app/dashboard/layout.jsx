@@ -68,6 +68,12 @@ export default function DashboardLayout({ children }) {
 
   const adminNavLinks = [
     {
+      name: "Admin Overview",
+      href: "/dashboard/admin",
+      icon: LayoutDashboard,
+      description: "Platform analytics",
+    },
+    {
       name: "Manage Users",
       href: "/dashboard/admin/users",
       icon: Users,
