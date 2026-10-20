@@ -19,6 +19,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth-client";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -143,6 +144,7 @@ export default function Navbar() {
 
           {/* Right Section: Auth buttons / User Avatar */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             {isPending ? (
               <Loader2 className="w-5 h-5 animate-spin text-amber-600" />
             ) : !user ? (
@@ -261,6 +263,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Toggle Button */}
           <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
