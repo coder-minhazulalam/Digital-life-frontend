@@ -381,8 +381,13 @@ export default function LessonDetailsClient({ lessonId }) {
     );
   }
 
-  const isUserPremium = currentUser?.isPremium === true;
-  const isLocked = lesson.accessLevel === "Premium" && !isUserPremium;
+  const isAdmin = currentUser?.role === "admin";
+  const isCreator = Boolean(currentUser?.email && currentUser.email === lesson.creatorEmail);
+  const isUserPremium = currentUser?.isPremium === true || isAdmin;
+  const isLocked =
+    (lesson.accessLevel === "Premium" || lesson.access === "Premium") &&
+    !isUserPremium &&
+    !isCreator;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/40 via-white to-amber-50/20 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 py-10 px-4 sm:px-6 lg:px-8">

@@ -126,6 +126,44 @@ export default function ManageLessonsPage() {
     }
   };
 
+  // Toggle Free / Premium access level
+  const handleAccessToggle = async (lesson) => {
+    const lessonId = lesson._id || lesson.id;
+    const isCurrentlyPremium = lesson.accessLevel === "Premium" || lesson.access === "Premium";
+    const newAccess = isCurrentlyPremium ? "Free" : "Premium";
+
+    try {
+      setActionLoadingId(lessonId);
+      setFeedback(null);
+      const res = await fetch(`${apiUrl}/admin/lessons/${lessonId}/access`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessLevel: newAccess }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update access level");
+
+      setLessons((prev) =>
+        prev.map((l) =>
+          (l._id || l.id) === lessonId
+            ? { ...l, access: newAccess, accessLevel: newAccess }
+            : l
+        )
+      );
+      setFeedback({
+        type: "success",
+        message: `Lesson "${lesson.title}" access changed to ${newAccess}.`,
+      });
+    } catch (err) {
+      setFeedback({
+        type: "error",
+        message: err.message || "Error updating access level.",
+      });
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
   // Delete lesson
   const handleDeleteLesson = async (lesson) => {
     const lessonId = lesson._id || lesson.id;
@@ -159,7 +197,9 @@ export default function ManageLessonsPage() {
   const metrics = useMemo(() => {
     const total = lessons.length;
     const featured = lessons.filter((l) => Boolean(l.isFeatured)).length;
-    const premium = lessons.filter((l) => l.access === "Premium").length;
+    const premium = lessons.filter(
+      (l) => l.access === "Premium" || l.accessLevel === "Premium"
+    ).length;
     const free = total - premium;
     return { total, featured, premium, free };
   }, [lessons]);
@@ -381,7 +421,7 @@ export default function ManageLessonsPage() {
                   const lessonId = l._id || l.id;
                   const isActionLoading = actionLoadingId === lessonId;
                   const isFeatured = Boolean(l.isFeatured);
-                  const isPremium = l.access === "Premium";
+                  const isPremium = l.accessLevel === "Premium" || l.access === "Premium";
                   const isPrivate = l.visibility === "Private";
 
                   return (
@@ -482,6 +522,25 @@ export default function ManageLessonsPage() {
                       {/* Actions */}
                       <td className="py-3.5 px-4 sm:px-6 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          {/* Toggle Free / Premium Access */}
+                          <button
+                            onClick={() => handleAccessToggle(l)}
+                            disabled={isActionLoading}
+                            title={
+                              isPremium
+                                ? "Change access to Free (available to everyone)"
+                                : "Make this lesson Premium (exclusive wisdom)"
+                            }
+                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-40 ${
+                              isPremium
+                                ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 border border-amber-200 dark:border-amber-800"
+                                : "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 border border-blue-200 dark:border-blue-800"
+                            }`}
+                          >
+                            <Crown className="w-3 h-3" />
+                            <span>{isPremium ? "Make Free" : "Make Premium"}</span>
+                          </button>
+
                           {/* Toggle Featured */}
                           <button
                             onClick={() => handleFeaturedToggle(l)}

@@ -30,8 +30,12 @@ const toneStyles = {
 
 export default function LessonCard({ lesson, currentUser }) {
   const isOwner = currentUser && currentUser.email === lesson.creatorEmail;
-  const isPremiumUser = currentUser && currentUser.isPremium;
-  const isLocked = lesson.accessLevel === "Premium" && !isPremiumUser && !isOwner;
+  const isAdmin = currentUser && currentUser.role === "admin";
+  const isPremiumUser = currentUser && (currentUser.isPremium || isAdmin);
+  const isLocked =
+    (lesson.accessLevel === "Premium" || lesson.access === "Premium") &&
+    !isPremiumUser &&
+    !isOwner;
 
   const formattedDate = lesson.createdAt
     ? new Date(lesson.createdAt).toLocaleDateString("en-US", {
